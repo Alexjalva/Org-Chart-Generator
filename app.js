@@ -14,23 +14,16 @@ const Employee = require("./lib/Employee");
 const empArray = [];
 let newEmp;
 
-function ensureOutPath() {
-    try {
-        return fs.mkdirSync('/output')
-    } catch (err) {
-        if (err.code !== 'EEXIST') throw err
-    }
-}
-// Write code to use inquirer to gather information about the development team members,
-// and to create objects for each team member (using the correct classes as blueprints!)
-
+//Function that goes through the employee building process
 function getEmployee() {
+    //Asks users if they would like to enter another employee
     inquirer.prompt([
         {
             type: 'confirm',
             message: 'Would you like to enter another employee?',
             name: 'continue'
         }
+        //proceeds to employee questions if they confirmed. 
     ]).then(answer => {
         if (answer.continue) {
             inquirer
@@ -57,7 +50,9 @@ function getEmployee() {
                         name: 'email',
                     },
                 ])
+                //takes generic answers and proceeds to more specific questions
                 .then(answers => {
+                    //switch statement that proceeds depending on the type of employee being built. asks teh specific question and then recursively starts the process again. 
                     switch (answers.type) {
                         case "Engineer":
                             inquirer
@@ -71,7 +66,7 @@ function getEmployee() {
                                 .then(response => {
                                     newEmp = new Engineer(answers.name, answers.id, answers.email, response.github);
                                     empArray.push(newEmp);
-                                    console.log(empArray);
+                                    
                                     return getEmployee();
                                 })
                             break;
@@ -87,7 +82,7 @@ function getEmployee() {
                                 .then(response => {
                                     newEmp = new Intern(answers.name, answers.id, answers.email, response.school);
                                     empArray.push(newEmp);
-                                    console.log(empArray);
+                                    
                                     return getEmployee();
                                 })
                             break;
@@ -103,7 +98,7 @@ function getEmployee() {
                                 .then(response => {
                                     newEmp = new Manager(answers.name, answers.id, answers.email, response.officeNumber);
                                     empArray.push(newEmp);
-                                    console.log(empArray);
+                                    
                                     return getEmployee();
                                 })
                             break;
@@ -111,6 +106,7 @@ function getEmployee() {
 
                 })
         }
+        //when the user finally answers that they do not want to add another employee, it writes the data collected so far. 
         else {
             fs.mkdir(OUTPUT_DIR,
                 { recursive: true }, (err) => {
@@ -135,36 +131,3 @@ function getEmployee() {
 
 }
 getEmployee();
-// After the user has input all employees desired, call the `render` function (required
-// above) and pass in an array containing all employee objects; the `render` function will
-// generate and return a block of HTML including templated divs for each employee!
-
-// After you have your html, you're now ready to create an HTML file using the HTML
-// returned from the `render` function. Now write it to a file named `team.html` in the
-// `output` folder. You can use the variable `outputPath` above target this location.
-// Hint: you may need to check if the `output` folder exists and create it if it
-// does not.
-
-// HINT: each employee type (manager, engineer, or intern) has slightly different
-// information; write your code to ask different questions via inquirer depending on
-// employee type.
-
-// HINT: make sure to build out your classes first! Remember that your Manager, Engineer,
-// and Intern classes should all extend from a class named Employee; see the directions
-// for further information. Be sure to test out each class and verify it generates an
-// object with the correct structure and methods. This structure will be crucial in order
-// for the provided `render` function to work! ```
-
-
-//.then(function (){
-//     ensureOutPath();
-//     fs.writeFile(outputPath, render(empArray), function(err) {
-
-//         if (err) {
-//           return console.log(err);
-//         }
-
-//         console.log("Your Employees have successfully been organized");
-
-//       });
-// });
